@@ -1,0 +1,122 @@
+---
+title: "Loops and Functions"
+author: "Paloma Cartwright"
+date: "12/08/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Part 1: For loops revisited 
+
+#### Task 1
+
+```{r}
+weekdays <- c("Monday", "Tuesday", "Wednesday", "Thursday", 
+              "Friday", "Saturday", "Sunday")
+
+transects <- c("Transect A", "Transect B", "Transect C")
+
+matrix_1 <- matrix(nrow = length(weekdays), ncol = length(transects))
+
+for(i in seq_along(weekdays)){
+  for(j in seq_along(transects)){
+    matrix_1[i, j] <- paste(weekdays[i], "-", transects[j])
+  }
+}
+
+```
+
+## Part 2: Functions introduced 
+
+#### Task 2 
+
+```{r}
+force <- function(mass, acceleration){
+  return(paste("The resulting force is", mass * acceleration, "Newtons."))
+}
+force(10, 10)
+```
+
+
+#### Task 3
+
+```{r}
+name_column <- function(df_name, number){
+  if(number < 1){
+    stop("Not a column")
+  }else if (number > ncol(df_name)){
+    stop("not a column")
+  } else{
+    names(df_name[number])
+  } 
+}
+name_column(mtcars, 3)
+```
+
+#### Task 4 
+
+```{r}
+fish_parms <- data.frame(sci_name = c("Chanos chanos", "Sphyraena barracuda", 
+                                      "Caranx ignobilis"), 
+                         common_name = c("Milkfish", "Great barracuda", 
+                                         "Giant trevally"), 
+                         a_est = c(0.0905, 0.0181, 0.0353), 
+                         b_est = c(2.52, 3.27, 3.05))
+lengths_vec <- seq(from = 0, to = 100, by = 1)
+milkfish_weights <- vector(mode = "numeric", length = length(lengths_vec))
+
+fish_weight <- function(fish_name, tot_length) {
+  for (i in seq_along(tot_length)) {
+    if (!(fish_name %in% c("Milkfish", "Great barracuda", "Giant trevally"))) {
+      stop("We don't recognize that fish!")
+    } else{
+      selected_fish <- dplyr::filter(fish_parms, fish_name == common_name)
+      milkfish_weights[i] <- 
+        selected_fish$a_est * (tot_length[i] ^ selected_fish$b_est)
+    }
+  }
+  return(milkfish_weights)
+}
+
+fish_weight("Milkfish", lengths_vec)
+
+```
+
+#### Task 5 
+
+Part 1: 
+
+```{r}
+wave_heights <- seq(from = 0, to = 3, by = 0.2)
+
+wave_power_deep <- function(wave_height, wave_period){
+  message("Deep power equation was used")
+  for(i in seq_along(wave_height)){
+    print(power <- 0.5 * wave_height[i]^2 * wave_period)
+  }
+  
+}
+wave_power_deep(wave_heights, 8)
+```
+
+Part 2: 
+
+```{r}
+
+wave_power <- function(water_depth, wave_height, period){
+  if(water_depth > 12){
+    message("Deep power equation was used")
+    return(0.5 * wave_height^2 * period)
+  }else{
+    message("Shallow water power equation was used")
+    return(0.81 * wave_height^2 * period)
+  }
+}
+wave_power(8, 12, 8)
+
+```
+
+
